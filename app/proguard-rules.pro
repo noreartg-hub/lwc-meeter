@@ -1,2 +1,0 @@
--keep class com.lwc.meter.** { *; }
--keepclassmembers class * { @android.webkit.JavascriptInterface <methods>; }
