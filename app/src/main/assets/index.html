@@ -1078,30 +1078,49 @@ function openWAPayment() {
 }
 
 function openMobiCash() {
-  // Package name موبي كاش ليبيا - بنك الوحدة
-  const pkgAndroid = 'com.future.wahdabank.mobicash';
-  const storeUrl   = 'https://play.google.com/store/apps/details?id=' + pkgAndroid;
-  const appUrl     = 'intent://#Intent;package=' + pkgAndroid + ';scheme=mobicash;end';
-  const iosUrl     = 'https://apps.apple.com/app/mobicash';
+  var pkgAndroid  = 'com.future.wahdabank.mobicash';
+  var iosAppId    = '6748722204';
+  var iosStoreUrl = 'https://apps.apple.com/ly/app/%D9%85%D9%88%D8%A8%D9%8A-%D9%83%D8%A7%D8%B4/id' + iosAppId;
+  var iosAppUrl   = 'mobicash://';            // deep link داخل التطبيق
+  var iosUniversal= 'itms-apps://itunes.apple.com/app/id' + iosAppId;
+  var androidPlay = 'https://play.google.com/store/apps/details?id=' + pkgAndroid;
+  var androidApp  = 'intent://#Intent;package=' + pkgAndroid + ';end';
 
-  const isAndroid = /Android/i.test(navigator.userAgent);
-  const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  var ua = navigator.userAgent;
 
-  if (isAndroid) {
-    // Android: فتح التطبيق مباشرة أو المتجر إذا غير مثبّت
-    try {
-      window.location.href = appUrl;
-      // إذا لم يفتح خلال 2 ثانية افتح المتجر
-      setTimeout(function() {
-        window.open(storeUrl, '_blank');
-      }, 2000);
-    } catch(e) {
-      window.open(storeUrl, '_blank');
-    }
-  } else if (isIOS) {
-    window.open(iosUrl, '_blank');
+  if (/iPhone|iPad|iPod/i.test(ua)) {
+    // iOS: محاولة فتح التطبيق أولاً
+    var fallbackTimer = setTimeout(function() {
+      // التطبيق غير مثبّت — افتح App Store
+      window.location.href = iosStoreUrl;
+    }, 2000);
+
+    // محاولة فتح التطبيق مباشرة
+    window.location.href = iosAppUrl;
+
+    // إذا رجع المستخدم للتطبيق يعني التطبيق فُتح
+    window.addEventListener('pagehide', function() {
+      clearTimeout(fallbackTimer);
+    });
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) clearTimeout(fallbackTimer);
+    });
+
+  } else if (/Android/i.test(ua)) {
+    // Android: فتح التطبيق عبر intent
+    var opened = false;
+    var timer = setTimeout(function() {
+      if (!opened) window.open(androidPlay, '_blank');
+    }, 1500);
+    window.addEventListener('blur', function onBlur() {
+      opened = true;
+      clearTimeout(timer);
+      window.removeEventListener('blur', onBlur);
+    });
+    window.location.href = androidApp;
+
   } else {
-    window.open('https://wahdabank.ly/mobicash', '_blank');
+    window.open(androidPlay, '_blank');
   }
 }
 
