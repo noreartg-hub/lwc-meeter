@@ -382,11 +382,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;co
         <div style="font-size:36px;font-weight:900;color:var(--white);margin:6px 0" id="r-success-amt">-- LD</div>
         <div style="font-size:12px;color:var(--muted)">تمت إضافة الرصيد</div>
       </div>
+      <!-- أزرار الدفع السريع -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-lbl">الدفع التلقائي</div>
+        <!-- واتساب -->
+        <button onclick="openWAPayment()" style="width:100%;background:#25D366;border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:800;padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;font-family:inherit">
+          <span style="font-size:22px">💬</span>
+          <div style="text-align:right">
+            <div>شحن عبر واتساب</div>
+            <div style="font-size:11px;opacity:.75;font-weight:400">أرسل المبلغ واستلم الكود فوراً</div>
+          </div>
+        </button>
+        <!-- موبيكاش -->
+        <button onclick="openMobiCash()" style="width:100%;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.4);border-radius:14px;color:var(--blue);font-size:15px;font-weight:700;padding:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:inherit">
+          <span style="font-size:22px">📱</span>
+          <div style="text-align:right">
+            <div>فتح Mobi Cash</div>
+            <div style="font-size:11px;opacity:.7;font-weight:400;color:var(--muted)">دفع مباشر من تطبيق موبيكاش</div>
+          </div>
+        </button>
+      </div>
+
+      <!-- فاصل -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="flex:1;height:.5px;background:var(--border)"></div>
+        <div style="font-size:12px;color:var(--muted)">أو أدخل كود الشحن</div>
+        <div style="flex:1;height:.5px;background:var(--border)"></div>
+      </div>
+
       <!-- إدخال الكود -->
       <div class="card">
-        <div class="card-lbl">أدخل كود الشحن</div>
+        <div class="card-lbl">كود الشحن</div>
         <input type="text" id="r-code" class="code-input" placeholder="XXXX-XXXX" maxlength="9" oninput="fmtCode(this)" autocomplete="off" autocorrect="off" spellcheck="false">
-        <!-- حساب الرسوم -->
         <div id="r-fee-box" class="fee-box" style="display:none">
           <div class="fee-row">
             <div class="fee-lbl">مبلغ الشحن</div>
@@ -397,7 +424,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;co
             <div class="fee-val" style="color:var(--yellow)" id="r-fee-fee">-- LD</div>
           </div>
           <div class="fee-row">
-            <div class="fee-lbl" style="color:var(--white);font-weight:700">الإجمالي المدفوع</div>
+            <div class="fee-lbl" style="color:var(--white);font-weight:700">الإجمالي</div>
             <div class="fee-val" style="color:var(--green);font-size:20px" id="r-fee-total">-- LD</div>
           </div>
         </div>
@@ -437,7 +464,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;co
         <span style="font-size:20px">💬</span> ادفع عبر واتساب
       </button>
       <!-- زر موبي كاش -->
-      <button id="mobi-pay-btn" onclick="openMobiCash()" style="display:none;width:100%;background:rgba(59,130,246,.12);border:.5px solid rgba(59,130,246,.3);border-radius:14px;color:var(--blue);font-size:15px;font-weight:700;padding:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      <button id="mobi-pay-btn" onclick="openMobiCash()" style="width:100%;background:rgba(59,130,246,.12);border:.5px solid rgba(59,130,246,.3);border-radius:14px;color:var(--blue);font-size:15px;font-weight:700;padding:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
         <span style="font-size:18px">📱</span> فتح Mobi Cash مباشرة
       </button>
       </div>
@@ -1039,6 +1066,50 @@ function goTab(t) {
 //  Boot
 // ══════════════════════════════════════════
 
+
+// ── Payment Buttons ────────────────────────
+const MOBICASH_URL   = 'https://mobicash.ly'; // ← رابط موبيكاش
+const MOBICASH_APP   = 'mobicash://';         // ← ديب لينك موبيكاش
+
+function openWAPayment() {
+  const msg = 'مرحبا\nأريد شحن رصيد الكهرباء';
+  const url  = 'https://wa.me/' + WA_BOT_NUMBER + '?text=' + encodeURIComponent(msg);
+  openExternalUrl(url);
+}
+
+function openMobiCash() {
+  // محاولة فتح تطبيق موبيكاش أولاً
+  const appUrl     = MOBICASH_APP;
+  const browserUrl = MOBICASH_URL;
+
+  if (window.Android && window.Android.openWhatsApp) {
+    // Android: نستخدم Intent
+    openExternalUrl(appUrl);
+  } else {
+    // iOS/Web: نجرب الـ deep link ثم المتصفح
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = appUrl;
+    document.body.appendChild(iframe);
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+      openExternalUrl(browserUrl);
+    }, 1500);
+  }
+}
+
+function openExternalUrl(url) {
+  if (window.Android && window.Android.openWhatsApp &&
+      (url.startsWith('https://wa.me') || url.startsWith('whatsapp://'))) {
+    // استخدام AndroidBridge للواتساب
+    const phone = WA_BOT_NUMBER;
+    const msg   = 'مرحبا';
+    window.Android.openWhatsApp(phone, msg);
+  } else {
+    window.open(url, '_blank');
+  }
+}
+
 // ── WhatsApp Recharge Button ───────────────
 const WA_BOT_NUMBER = '218921000000'; // ← غيّر لرقم واتساب البوت
 
@@ -1072,5 +1143,3 @@ boot();
 </script>
 </body>
 </html>
-
-  
