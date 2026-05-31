@@ -1,7 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- الصلاحية لفتح التطبيقات الخارجية -->
+    <queries>
+        <!-- واتساب -->
+        <package android:name="com.whatsapp"/>
+        <package android:name="com.whatsapp.w4b"/>
+        <!-- موبيكاش -->
+        <package android:name="ly.mobicash"/>
+        <package android:name="com.mobicash"/>
+        <!-- المتصفح -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="http"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="whatsapp"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="mobicash"/>
+        </intent>
+    </queries>
+
     <application
         android:name=".LWCApp"
         android:allowBackup="true"
@@ -12,6 +41,7 @@
         android:theme="@style/Theme.LWCMeter"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,5 +53,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
     </application>
 </manifest>
