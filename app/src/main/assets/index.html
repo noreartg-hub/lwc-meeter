@@ -307,6 +307,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;co
         </div>
       </div>
       <!-- أزرار سريعة -->
+      <!-- زر واتساب الشحن التلقائي -->
+      <div onclick="openWhatsAppRecharge()" style="background:rgba(37,211,102,.1);border:.5px solid rgba(37,211,102,.35);border-radius:16px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;cursor:pointer">
+        <div style="width:44px;height:44px;background:#25D366;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">📲</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px">شحن عبر واتساب + موبيكاش</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5)">تلقائي — ادفع واستلم الكود فوراً</div>
+        </div>
+        <div style="font-size:20px">←</div>
+      </div>
       <div class="quick-row">
         <div class="quick-btn" style="background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.3)" onclick="goTab('recharge')">
           <span style="font-size:22px">🎫</span>
@@ -392,7 +401,45 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;co
             <div class="fee-val" style="color:var(--green);font-size:20px" id="r-fee-total">-- LD</div>
           </div>
         </div>
-        <button class="btn btn-blue" id="r-btn" onclick="doRedeem()">⚡ شحن الرصيد</button>
+        <button class="btn btn-blue" id="r-btn" onclick="doRedeem()">⚡ استخدام الكود</button>
+      
+      <div style="margin:16px 0;display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:.5px;background:var(--border)"></div>
+        <div style="font-size:11px;color:var(--muted)">أو ادفع وستستلم الكود تلقائياً</div>
+        <div style="flex:1;height:.5px;background:var(--border)"></div>
+      </div>
+
+      <!-- خانة المبلغ للدفع -->
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-align:right">المبلغ المطلوب شحنه</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <div onclick="setPayAmt(5)"  style="flex:1;min-width:60px;text-align:center;padding:10px 6px;background:rgba(37,211,102,.07);border:.5px solid rgba(37,211,102,.25);border-radius:10px;font-size:13px;font-weight:700;color:#25D366;cursor:pointer">5 LD</div>
+        <div onclick="setPayAmt(10)" style="flex:1;min-width:60px;text-align:center;padding:10px 6px;background:rgba(37,211,102,.07);border:.5px solid rgba(37,211,102,.25);border-radius:10px;font-size:13px;font-weight:700;color:#25D366;cursor:pointer">10 LD</div>
+        <div onclick="setPayAmt(20)" style="flex:1;min-width:60px;text-align:center;padding:10px 6px;background:rgba(37,211,102,.07);border:.5px solid rgba(37,211,102,.25);border-radius:10px;font-size:13px;font-weight:700;color:#25D366;cursor:pointer">20 LD</div>
+        <div onclick="setPayAmt(50)" style="flex:1;min-width:60px;text-align:center;padding:10px 6px;background:rgba(37,211,102,.07);border:.5px solid rgba(37,211,102,.25);border-radius:10px;font-size:13px;font-weight:700;color:#25D366;cursor:pointer">50 LD</div>
+      </div>
+      <!-- ملخص الرسوم -->
+      <div id="pay-summary" style="display:none;background:#051020;border:.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:.5px dashed rgba(255,255,255,.07)">
+          <span style="font-size:12px;color:var(--muted)">مبلغ الشحن</span>
+          <span style="font-size:14px;font-weight:700" id="pay-amount-lbl">-- LD</span>
+        </div>
+        <div id="pay-fee-row" style="display:none;justify-content:space-between;padding:4px 0;border-bottom:.5px dashed rgba(255,255,255,.07)">
+          <span style="font-size:12px;color:var(--muted)">رسوم الخدمة</span>
+          <span style="font-size:14px;font-weight:700;color:var(--yellow)" id="pay-fee-lbl">-- LD</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0">
+          <span style="font-size:13px;font-weight:700;color:var(--white)">الإجمالي</span>
+          <span style="font-size:18px;font-weight:900;color:#25D366" id="pay-total-lbl">-- LD</span>
+        </div>
+      </div>
+      <!-- زر واتساب -->
+      <button id="wa-pay-btn" onclick="openWAPayment()" style="display:none;width:100%;background:#25D366;border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:800;padding:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:20px">💬</span> ادفع عبر واتساب
+      </button>
+      <!-- زر موبي كاش -->
+      <button id="mobi-pay-btn" onclick="openMobiCash()" style="display:none;width:100%;background:rgba(59,130,246,.12);border:.5px solid rgba(59,130,246,.3);border-radius:14px;color:var(--blue);font-size:15px;font-weight:700;padding:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span style="font-size:18px">📱</span> فتح Mobi Cash مباشرة
+      </button>
       </div>
       <!-- الخطوات -->
       <div class="card">
@@ -529,8 +576,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;co
 // ══════════════════════════════════════════
 //  CONFIGURATION — عدّل هذا
 // ══════════════════════════════════════════
-const API  = 'http://192.168.0.100:3000/api'; // ← غيّر هذا لـ IP جهازك // ← عدّل هذا
-const DEMO = true; // غيّر لـ false عند تشغيل السيرفر
+const API         = 'http://192.168.0.100:3000/api';
+const DEMO        = true;
+const OWNER_WA    = '218921000002'; // ← رقم واتساب المالك (218 = ليبيا)
+const MOBI_NUMBER = '0921000002';   // ← رقم موبي كاش المالك
 
 // ══════════════════════════════════════════
 //  State
@@ -989,6 +1038,20 @@ function goTab(t) {
 // ══════════════════════════════════════════
 //  Boot
 // ══════════════════════════════════════════
+
+// ── WhatsApp Recharge Button ───────────────
+const WA_BOT_NUMBER = '218921000000'; // ← غيّر لرقم واتساب البوت
+
+function openWhatsAppRecharge() {
+  const msg = 'مرحبا';
+  const url = 'https://wa.me/' + WA_BOT_NUMBER + '?text=' + encodeURIComponent(msg);
+  if (window.Android && window.Android.openWhatsApp) {
+    window.Android.openWhatsApp(WA_BOT_NUMBER, msg);
+  } else {
+    window.open(url, '_blank');
+  }
+}
+
 async function boot() {
   const steps = ['جلب البيانات...','التحقق من الجلسة...','تهيئة الواجهة...','جاهز ✓'];
   for (let i=0; i<steps.length; i++) {
@@ -1009,3 +1072,5 @@ boot();
 </script>
 </body>
 </html>
+
+  
